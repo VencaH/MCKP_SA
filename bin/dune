@@ -1,0 +1,4 @@
+(executable
+ (public_name MCKP)
+ (name main)
+ (libraries MCKP))
