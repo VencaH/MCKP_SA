@@ -202,6 +202,8 @@
               ocamlPackages.ocamlformat-rpc-lib
               # Fancy REPL thing
               ocamlPackages.utop
+
+              ocamlPackages.base
             ];
 
             # Tools from packages

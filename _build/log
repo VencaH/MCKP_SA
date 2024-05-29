@@ -1,157 +1,26 @@
 # dune exec MCKP
 # OCAMLPARAM: unset
-# Workspace root: /home/vencah/skola/2023-24/ls/AK8MI/MCKP
-$ /usr/bin/nproc > /tmp/dune893b3c.output 2> /dev/null
+# Shared cache: disabled
+# Shared cache location: /home/vencah/.cache/dune/db
+# Workspace root: /home/vencah/skola/2023-2024/ls/AK8MI/practical/MCKP_SA
 # Auto-detected concurrency: 12
-# disable binary cache
-$ /usr/bin/ocamlc.opt -config > /tmp/dunedaf97a.output
 # Dune context:
 #  { name = "default"
 #  ; kind = "default"
-#  ; profile = Dyn
+#  ; profile = Dev
 #  ; merlin = true
-#  ; for_host = None
 #  ; fdo_target_exe = None
-#  ; build_dir = "default"
-#  ; toplevel_path = None
-#  ; ocaml_bin = External "/usr/bin"
-#  ; ocaml = Ok External "/usr/bin/ocaml"
-#  ; ocamlc = External "/usr/bin/ocamlc.opt"
-#  ; ocamlopt = Ok External "/usr/bin/ocamlopt.opt"
-#  ; ocamldep = Ok External "/usr/bin/ocamldep.opt"
-#  ; ocamlmklib = Ok External "/usr/bin/ocamlmklib.opt"
-#  ; env =
+#  ; build_dir = In_build_dir "default"
+#  ; installed_env =
 #      map
-#        { "CAML_LD_LIBRARY_PATH" :
-#            "/home/vencah/skola/2023-24/ls/AK8MI/MCKP/_build/install/default/lib/stublibs"
-#        ; "DUNE_OCAML_HARDCODED" : "/usr/lib/ocaml"
-#        ; "DUNE_OCAML_STDLIB" : "/usr/lib/ocaml"
-#        ; "DUNE_SOURCEROOT" : "/home/vencah/skola/2023-24/ls/AK8MI/MCKP"
-#        ; "INSIDE_DUNE" :
-#            "/home/vencah/skola/2023-24/ls/AK8MI/MCKP/_build/default"
-#        ; "MANPATH" :
-#            "/home/vencah/skola/2023-24/ls/AK8MI/MCKP/_build/install/default/bin"
-#        ; "OCAMLFIND_IGNORE_DUPS_IN" :
-#            "/home/vencah/skola/2023-24/ls/AK8MI/MCKP/_build/install/default/lib"
-#        ; "OCAMLPATH" :
-#            "/home/vencah/skola/2023-24/ls/AK8MI/MCKP/_build/install/default/lib"
-#        ; "OCAMLTOP_INCLUDE_PATH" :
-#            "/home/vencah/skola/2023-24/ls/AK8MI/MCKP/_build/install/default/lib/toplevel"
+#        { "INSIDE_DUNE" :
+#            "/home/vencah/skola/2023-2024/ls/AK8MI/practical/MCKP_SA/_build/default"
 #        ; "OCAML_COLOR" : "always"
 #        ; "OPAMCOLOR" : "always"
 #        }
-#  ; findlib_path = [ External "/usr/lib/ocaml" ]
-#  ; arch_sixtyfour = true
-#  ; natdynlink_supported = true
-#  ; supports_shared_libraries = true
-#  ; ocaml_config =
-#      { version = "4.13.1"
-#      ; standard_library_default = "/usr/lib/ocaml"
-#      ; standard_library = "/usr/lib/ocaml"
-#      ; standard_runtime = "the_standard_runtime_variable_was_deleted"
-#      ; ccomp_type = "cc"
-#      ; c_compiler = "x86_64-linux-gnu-gcc"
-#      ; ocamlc_cflags =
-#          [ "-O2"
-#          ; "-fno-strict-aliasing"
-#          ; "-fwrapv"
-#          ; "-pthread"
-#          ; "-fPIC"
-#          ; "-g"
-#          ; "-O2"
-#          ; "-fstack-protector-strong"
-#          ; "-Wformat"
-#          ; "-Werror=format-security"
-#          ]
-#      ; ocamlc_cppflags =
-#          [ "-D_FILE_OFFSET_BITS=64"; "-Wdate-time"; "-D_FORTIFY_SOURCE=2" ]
-#      ; ocamlopt_cflags =
-#          [ "-O2"
-#          ; "-fno-strict-aliasing"
-#          ; "-fwrapv"
-#          ; "-pthread"
-#          ; "-fPIC"
-#          ; "-g"
-#          ; "-O2"
-#          ; "-fstack-protector-strong"
-#          ; "-Wformat"
-#          ; "-Werror=format-security"
-#          ]
-#      ; ocamlopt_cppflags =
-#          [ "-D_FILE_OFFSET_BITS=64"; "-Wdate-time"; "-D_FORTIFY_SOURCE=2" ]
-#      ; bytecomp_c_compiler =
-#          [ "x86_64-linux-gnu-gcc"
-#          ; "-O2"
-#          ; "-fno-strict-aliasing"
-#          ; "-fwrapv"
-#          ; "-pthread"
-#          ; "-fPIC"
-#          ; "-g"
-#          ; "-O2"
-#          ; "-fstack-protector-strong"
-#          ; "-Wformat"
-#          ; "-Werror=format-security"
-#          ; "-D_FILE_OFFSET_BITS=64"
-#          ; "-Wdate-time"
-#          ; "-D_FORTIFY_SOURCE=2"
-#          ]
-#      ; bytecomp_c_libraries = [ "-lm"; "-lpthread" ]
-#      ; native_c_compiler =
-#          [ "x86_64-linux-gnu-gcc"
-#          ; "-O2"
-#          ; "-fno-strict-aliasing"
-#          ; "-fwrapv"
-#          ; "-pthread"
-#          ; "-fPIC"
-#          ; "-g"
-#          ; "-O2"
-#          ; "-fstack-protector-strong"
-#          ; "-Wformat"
-#          ; "-Werror=format-security"
-#          ; "-D_FILE_OFFSET_BITS=64"
-#          ; "-Wdate-time"
-#          ; "-D_FORTIFY_SOURCE=2"
-#          ]
-#      ; native_c_libraries = [ "-lm" ]
-#      ; cc_profile = []
-#      ; architecture = "amd64"
-#      ; model = "default"
-#      ; int_size = 63
-#      ; word_size = 64
-#      ; system = "linux"
-#      ; asm = [ "x86_64-linux-gnu-as" ]
-#      ; asm_cfi_supported = true
-#      ; with_frame_pointers = false
-#      ; ext_exe = ""
-#      ; ext_obj = ".o"
-#      ; ext_asm = ".s"
-#      ; ext_lib = ".a"
-#      ; ext_dll = ".so"
-#      ; os_type = "Unix"
-#      ; default_executable_name = "a.out"
-#      ; systhread_supported = true
-#      ; host = "x86_64-pc-linux-gnu"
-#      ; target = "x86_64-pc-linux-gnu"
-#      ; profiling = false
-#      ; flambda = false
-#      ; spacetime = false
-#      ; safe_string = true
-#      ; exec_magic_number = "Caml1999X030"
-#      ; cmi_magic_number = "Caml1999I030"
-#      ; cmo_magic_number = "Caml1999O030"
-#      ; cma_magic_number = "Caml1999A030"
-#      ; cmx_magic_number = "Caml1999Y030"
-#      ; cmxa_magic_number = "Caml1999Z030"
-#      ; ast_impl_magic_number = "Caml1999M030"
-#      ; ast_intf_magic_number = "Caml1999N030"
-#      ; cmxs_magic_number = "Caml1999D030"
-#      ; cmt_magic_number = "Caml1999T030"
-#      ; natdynlink_supported = true
-#      ; supports_shared_libraries = true
-#      ; windows_unicode = false
-#      }
+#  ; instrument_with = []
 #  }
-# Workspace root: /home/vencah/skola/2023-24/ls/AK8MI/MCKP
-$ (cd _build/default && /usr/bin/ocamlc.opt -w @1..3@5..28@30..39@43@46..47@49..57@61..62-40 -strict-sequence -strict-formats -short-paths -keep-locs -g -bin-annot -I bin/.main.eobjs/byte -I lib/.MCKP.objs/byte -no-alias-deps -opaque -o bin/.main.eobjs/byte/dune__exe__Main.cmo -c -impl bin/main.ml)
-$ (cd _build/default && /usr/bin/ocamlopt.opt -w @1..3@5..28@30..39@43@46..47@49..57@61..62-40 -strict-sequence -strict-formats -short-paths -keep-locs -g -I bin/.main.eobjs/byte -I bin/.main.eobjs/native -I lib/.MCKP.objs/byte -I lib/.MCKP.objs/native -intf-suffix .ml -no-alias-deps -opaque -o bin/.main.eobjs/native/dune__exe__Main.cmx -c -impl bin/main.ml)
-$ (cd _build/default && /usr/bin/ocamlopt.opt -w @1..3@5..28@30..39@43@46..47@49..57@61..62-40 -strict-sequence -strict-formats -short-paths -keep-locs -g -o bin/main.exe lib/MCKP.cmxa bin/.main.eobjs/native/dune__exe__Main.cmx)
+$ /nix/store/zxsclb4y16nkvaq5l5hx4ga9pm2zwqrl-ocaml-5.1.1/bin/ocamlc.opt -config > /tmp/nix-shell.dJNmXa/dune_65a795_output
+$ (cd _build/default && /nix/store/zxsclb4y16nkvaq5l5hx4ga9pm2zwqrl-ocaml-5.1.1/bin/ocamlc.opt -w @1..3@5..28@30..39@43@46..47@49..57@61..62-40 -strict-sequence -strict-formats -short-paths -keep-locs -g -bin-annot -I bin/.main.eobjs/byte -I /nix/store/7s8i870d5vdil5gllrc63h826mw0w4p8-ocaml5.1.1-base-0.16.2/lib/ocaml/5.1.1/site-lib/base -I /nix/store/7s8i870d5vdil5gllrc63h826mw0w4p8-ocaml5.1.1-base-0.16.2/lib/ocaml/5.1.1/site-lib/base/base_internalhash_types -I /nix/store/7s8i870d5vdil5gllrc63h826mw0w4p8-ocaml5.1.1-base-0.16.2/lib/ocaml/5.1.1/site-lib/base/caml -I /nix/store/7s8i870d5vdil5gllrc63h826mw0w4p8-ocaml5.1.1-base-0.16.2/lib/ocaml/5.1.1/site-lib/base/shadow_stdlib -I /nix/store/v5ciihscfrwc4n9q883il5a44wqbz9ak-ocaml5.1.1-sexplib0-0.16.0/lib/ocaml/5.1.1/site-lib/sexplib0 -I lib/.MCKP.objs/byte -no-alias-deps -opaque -o bin/.main.eobjs/byte/dune__exe__Main.cmo -c -impl bin/main.ml)
+$ (cd _build/default && /nix/store/zxsclb4y16nkvaq5l5hx4ga9pm2zwqrl-ocaml-5.1.1/bin/ocamlopt.opt -w @1..3@5..28@30..39@43@46..47@49..57@61..62-40 -strict-sequence -strict-formats -short-paths -keep-locs -g -I bin/.main.eobjs/byte -I bin/.main.eobjs/native -I /nix/store/7s8i870d5vdil5gllrc63h826mw0w4p8-ocaml5.1.1-base-0.16.2/lib/ocaml/5.1.1/site-lib/base -I /nix/store/7s8i870d5vdil5gllrc63h826mw0w4p8-ocaml5.1.1-base-0.16.2/lib/ocaml/5.1.1/site-lib/base/base_internalhash_types -I /nix/store/7s8i870d5vdil5gllrc63h826mw0w4p8-ocaml5.1.1-base-0.16.2/lib/ocaml/5.1.1/site-lib/base/caml -I /nix/store/7s8i870d5vdil5gllrc63h826mw0w4p8-ocaml5.1.1-base-0.16.2/lib/ocaml/5.1.1/site-lib/base/shadow_stdlib -I /nix/store/v5ciihscfrwc4n9q883il5a44wqbz9ak-ocaml5.1.1-sexplib0-0.16.0/lib/ocaml/5.1.1/site-lib/sexplib0 -I lib/.MCKP.objs/byte -I lib/.MCKP.objs/native -intf-suffix .ml -no-alias-deps -opaque -o bin/.main.eobjs/native/dune__exe__Main.cmx -c -impl bin/main.ml)
+$ (cd _build/default && /nix/store/zxsclb4y16nkvaq5l5hx4ga9pm2zwqrl-ocaml-5.1.1/bin/ocamlopt.opt -w @1..3@5..28@30..39@43@46..47@49..57@61..62-40 -strict-sequence -strict-formats -short-paths -keep-locs -g -o bin/main.exe lib/MCKP.cmxa /nix/store/7s8i870d5vdil5gllrc63h826mw0w4p8-ocaml5.1.1-base-0.16.2/lib/ocaml/5.1.1/site-lib/base/base_internalhash_types/base_internalhash_types.cmxa -I /nix/store/7s8i870d5vdil5gllrc63h826mw0w4p8-ocaml5.1.1-base-0.16.2/lib/ocaml/5.1.1/site-lib/base/base_internalhash_types /nix/store/7s8i870d5vdil5gllrc63h826mw0w4p8-ocaml5.1.1-base-0.16.2/lib/ocaml/5.1.1/site-lib/base/caml/caml.cmxa /nix/store/v5ciihscfrwc4n9q883il5a44wqbz9ak-ocaml5.1.1-sexplib0-0.16.0/lib/ocaml/5.1.1/site-lib/sexplib0/sexplib0.cmxa /nix/store/7s8i870d5vdil5gllrc63h826mw0w4p8-ocaml5.1.1-base-0.16.2/lib/ocaml/5.1.1/site-lib/base/shadow_stdlib/shadow_stdlib.cmxa /nix/store/7s8i870d5vdil5gllrc63h826mw0w4p8-ocaml5.1.1-base-0.16.2/lib/ocaml/5.1.1/site-lib/base/base.cmxa -I /nix/store/7s8i870d5vdil5gllrc63h826mw0w4p8-ocaml5.1.1-base-0.16.2/lib/ocaml/5.1.1/site-lib/base bin/.main.eobjs/native/dune__exe__Main.cmx)
