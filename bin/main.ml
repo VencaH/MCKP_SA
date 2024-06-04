@@ -149,17 +149,17 @@ let () =
 
 let euler : float = 2.71828
 
-let metropolis (t : float) (min_t : float) (step_t : float) (best : int list)
+let metropolis (t : float) (best : int list)
     (best_cost : int) (current : int list) (current_cost : int) :
-    float * int * int list =
+     int * int list =
   let diff = Float.of_int (current_cost - best_cost) in
   if Float.( > ) diff 0. then
-    (Float.max (t *. step_t) min_t, current_cost, current)
+    ( current_cost, current)
   else
-    let prob = 1. /. Float.( ** ) euler (diff /. t) in
+    let prob = 1. /. (Float.( ** ) euler ((-.diff) /. t)) in
     if Float.( > ) prob (Random.float 1.) then
-      (Float.max (t *. step_t) min_t, current_cost, current)
-    else (t, best_cost, best)
+      (current_cost, current)
+    else (best_cost, best)
 
 (* step in local space *)
 let local_next (previous : int list) =
@@ -174,81 +174,83 @@ let local_next (previous : int list) =
         List.mapi prev ~f:(fun i x -> if i = class_id then x + step else x)
   in
   inner_local_next
-    (Random.int (no_classes - 1))
-    (-1 + (Random.int 1 * 2))
+    (Random.int no_classes )
+    (-1 + (Random.int 2 * 2))
     previous
 
 let eval_local (size : int) (start : int list) (t : float) (min_t : float)
-    (step_t : float) : float * int * int list =
-  let rec inner_eval_local (size : int) (current : int list) (t : float)
+    (step_t : float) :  int * int list =
+  let rec inner_eval_local (size : int) (t : float)
       (min_t : float) (step_t : float) (best : int list) (best_cost : int) :
-      float * int * int list =
-    match size with
-    | 0 ->
-        (t, best_cost, best)
-    | x ->
-        let current_cost = cost_function current in
-        let t, best_cost, best =
-          metropolis t min_t step_t best best_cost current current_cost
-        in
-        inner_eval_local (x - 1) (local_next current) t min_t step_t best
-          best_cost
-  in
-  inner_eval_local size start t min_t step_t start (-1)
-
-let simulated_annealing (size : int) (local_size : int) (max_t : float)
-    (min_t : float) (step_t : float) =
-  let rec inner_sa (size : int) (local_size : int) (iter : int) (t : float)
-      (min_t : float) (step_t : float) (current : int list) (best : int list)
-      (best_cost : int) : int * int list =
+      int * int list =
     match size with
     | 0 ->
         (best_cost, best)
     | x ->
-        let local_size = min size local_size in
-        let t, local_best_cost, current =
-          eval_local local_size current t min_t step_t
+        let next_input = local_next best in
+        let next_cost = cost_function next_input in
+        let best_cost, best =
+          metropolis t best best_cost next_input next_cost 
         in
-        let iter = iter + local_size in
-        let local_sa =
-          inner_sa (x - local_size) local_size iter t min_t step_t current
-        in
-        if local_best_cost > best_cost then local_sa current local_best_cost
-        else local_sa best best_cost
+        inner_eval_local (x - 1) t min_t step_t best
+          best_cost
   in
-  let current =
+  inner_eval_local size t min_t step_t start (cost_function start)
+
+let simulated_annealing (local_size : int) (max_t : float)
+    (min_t : float) (step_t : float) =
+  let rec inner_sa (local_size : int) (t : float)
+      (min_t : float) (step_t : float) (best : int list)
+      (best_cost : int) : int * int list =
+    match t  with
+    | t when Float.(<) t min_t ->
+        (best_cost, best)
+    | t ->
+        let  best_cost, best =
+          eval_local local_size best t min_t step_t
+        in
+        let new_t = t *. step_t in
+        inner_sa local_size new_t min_t step_t best best_cost
+  in
+  let start =
+    Stdlib.print_endline "randomizing";
     List.init no_classes ~f:(fun _ -> Random.int (size_class - 1))
   in
-  inner_sa size local_size 1 max_t min_t step_t current current
-    (cost_function current)
+  let start_cost = cost_function start in
+  inner_sa local_size max_t min_t step_t start start_cost
 
 let rec best_of (n : int) (current_best : int * int list) =
   match n with
   | 0 ->
       current_best
   | x ->
-      let cost, items = simulated_annealing 500000 10 100. 0.1 1. in
+      let cost, items = simulated_annealing 10 100. 1. 0.1 in
       let best_cost, _ = current_best in
       let next_run = best_of (x - 1) in
       if cost > best_cost then next_run (cost, items) else next_run current_best
 
 let () =
-  let time, (_, items) =
-    time_it (fun () -> simulated_annealing 500000 10 100. 0.1 1.)
+  let time, (cost, items) =
+    time_it (fun () -> simulated_annealing 10 1000. 0.1 0.993115)
   in
   Stdlib.print_endline "Done SA." ;
   Stdlib.print_string "time: " ;
   Stdlib.print_float time ;
   Stdlib.print_endline "s" ;
+  Stdlib.print_string "cost: ";
+  Stdlib.print_int cost;
+  Stdlib.print_newline ();
   Stdlib.print_endline "results: " ;
   print_results items
 
-let avg_of_n n =
-  List.fold (List.init n ~f:(fun _ -> 0)) ~init:0 ~f: (fun acc _ -> let (cost, _) =  simulated_annealing 500000 10 100. 0.1 1. in acc + cost)
- (* |> fun x -> x // n *)
+let stats n =
+  let results =  Array.init n ~f:(fun _ -> let cost,_ = simulated_annealing 10 1000. 1. 0.1 in Float.of_int cost ) in
+  [Owl_stats.mean results; Owl_stats.median results; Owl_stats.std results; Owl_stats.max results; Owl_stats.min results] 
 
+(*
 let () =
-  let avg = avg_of_n 100 in
+  let avg: float list = stats 100 in
   Stdlib.print_endline "Average of 100";
-  Stdlib.print_int avg;
+  Stdlib.print_float (List.nth_exn avg 0);
   Stdlib.print_newline();
+*)

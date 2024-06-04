@@ -1,4 +1,4 @@
 (executable
  (public_name MCKP)
  (name main)
- (libraries MCKP base))
+ (libraries MCKP unix base owl))
