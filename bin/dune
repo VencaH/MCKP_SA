@@ -1,4 +1,4 @@
 (executable
  (public_name MCKP)
  (name main)
- (libraries MCKP unix base owl))
+ (libraries MCKP unix base owl owl-plplot))

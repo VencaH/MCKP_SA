@@ -1,4 +1,5 @@
 open Base
+open Owl_plplot
 
 let () = Random.self_init ()
 
@@ -15,11 +16,17 @@ type item =
   ; item_size: int
   ; item_value: int }
 
-let no_classes = 15
+let no_classes = 17
 
 let size_class = 3
 
-let size_limit = 300
+let size_limit = 400
+
+let local_size = 10
+
+let max_t = 10000.
+let min_t = 0.1
+let step = 0.98853
 
 let pow x n =
   let rec inner_pow y x n =
@@ -99,7 +106,7 @@ let cost_function (combination : int list) : int =
   let value_acc (acc : int) (item_id : int * int) =
     (List.nth_exn items (get_id item_id)).item_value |> ( + ) acc
   in
-  if size > size_limit then -1 else List.fold index_cmb ~init:0 ~f:value_acc
+  if size > size_limit then Int.min_value else List.fold index_cmb ~init:0 ~f:value_acc
 
 (* brute force  *)
 let next (previous : int list) : int list =
@@ -152,7 +159,7 @@ let euler : float = 2.71828
 let metropolis (t : float) (best : int list)
     (best_cost : int) (current : int list) (current_cost : int) :
      int * int list =
-  let diff = Float.of_int (current_cost - best_cost) in
+  let diff = if current_cost = Int.min_value then Float.min_value else Float.of_int (current_cost - best_cost)in
   if Float.( > ) diff 0. then
     ( current_cost, current)
   else
@@ -179,60 +186,56 @@ let local_next (previous : int list) =
     previous
 
 let eval_local (size : int) (start : int list) (t : float) (min_t : float)
-    (step_t : float) :  int * int list =
+    (step_t : float) (result: (int * int list) list ) : (int * int list) list * int * int list =
   let rec inner_eval_local (size : int) (t : float)
-      (min_t : float) (step_t : float) (best : int list) (best_cost : int) :
-      int * int list =
+      (min_t : float) (step_t : float) (best : int list) (best_cost : int) 
+      (result: (int * int list) list ) : (int * int list) list * int * int list =
     match size with
     | 0 ->
-        (best_cost, best)
+        (result, best_cost, best)
     | x ->
         let next_input = local_next best in
         let next_cost = cost_function next_input in
         let best_cost, best =
           metropolis t best best_cost next_input next_cost 
         in
+        let result = List.append result [best_cost, best] in
         inner_eval_local (x - 1) t min_t step_t best
-          best_cost
+          best_cost result
   in
-  inner_eval_local size t min_t step_t start (cost_function start)
+  inner_eval_local size t min_t step_t start (cost_function start) result
 
 let simulated_annealing (local_size : int) (max_t : float)
     (min_t : float) (step_t : float) =
   let rec inner_sa (local_size : int) (t : float)
       (min_t : float) (step_t : float) (best : int list)
-      (best_cost : int) : int * int list =
+      (best_cost : int) (result: (int * int list) list) : (int * int list) list * int * int list =
     match t  with
     | t when Float.(<) t min_t ->
-        (best_cost, best)
+        (result, best_cost, best)
     | t ->
-        let  best_cost, best =
-          eval_local local_size best t min_t step_t
+        let  result,best_cost, best =
+          eval_local local_size best t min_t step_t result
         in
         let new_t = t *. step_t in
-        inner_sa local_size new_t min_t step_t best best_cost
+        inner_sa local_size new_t min_t step_t best best_cost result
   in
+  let rec get_valid_start ()= 
   let start =
-    Stdlib.print_endline "randomizing";
     List.init no_classes ~f:(fun _ -> Random.int (size_class - 1))
   in
   let start_cost = cost_function start in
-  inner_sa local_size max_t min_t step_t start start_cost
+  if start_cost < 0 then get_valid_start () else (start_cost, start) in
+  let start_cost,start = get_valid_start() in
+  let result = [start_cost,start] in
+  inner_sa local_size max_t min_t step_t start start_cost result
 
-let rec best_of (n : int) (current_best : int * int list) =
-  match n with
-  | 0 ->
-      current_best
-  | x ->
-      let cost, items = simulated_annealing 10 100. 1. 0.1 in
-      let best_cost, _ = current_best in
-      let next_run = best_of (x - 1) in
-      if cost > best_cost then next_run (cost, items) else next_run current_best
+
+  let time, result =
+    time_it (fun () -> simulated_annealing local_size max_t min_t step)
 
 let () =
-  let time, (cost, items) =
-    time_it (fun () -> simulated_annealing 10 1000. 0.1 0.993115)
-  in
+  let _,cost, items = result in
   Stdlib.print_endline "Done SA." ;
   Stdlib.print_string "time: " ;
   Stdlib.print_float time ;
@@ -244,13 +247,33 @@ let () =
   print_results items
 
 let stats n =
-  let results =  Array.init n ~f:(fun _ -> let cost,_ = simulated_annealing 10 1000. 1. 0.1 in Float.of_int cost ) in
+  let results =  Array.init n ~f:(fun _ -> let _, cost,_ = simulated_annealing local_size max_t min_t step in Float.of_int cost ) in
   [Owl_stats.mean results; Owl_stats.median results; Owl_stats.std results; Owl_stats.max results; Owl_stats.min results] 
 
-(*
+
+let print_line fn_name dim data = 
+        Stdlib.Printf.printf
+                         "| %27s |  %6i |  %7.2f |  %7.2f |   %7.2f | %7.2f | %7.2f |" fn_name dim (List.nth_exn data 0) (List.nth_exn data 1) (List.nth_exn data 2) (List.nth_exn data 3) (List.nth_exn data 4);
+        Stdlib.print_newline()
+
+let print_stats_sa header =
+        Stdlib.print_endline header;
+    Stdlib.print_endline "|        cost function        | classes |   mean   |  median  | std. dev. |   max   |   min   |";
+    Stdlib.print_endline "-------------------------------------------------------------------------------------";
+    print_line "Multi-class Knapsac Problem" no_classes (stats 100)
+
 let () =
-  let avg: float list = stats 100 in
-  Stdlib.print_endline "Average of 100";
-  Stdlib.print_float (List.nth_exn avg 0);
-  Stdlib.print_newline();
-*)
+  print_stats_sa "Statistical information from 100 runs";
+  Stdlib.print_newline ()
+
+let () =
+let result,_,_ = result in
+let no_iter = Float.of_int (List.length result) -. 1. in
+let filename = "SA_MCKP.png" in
+let out = Plot.create filename in
+  Plot.set_title out "SA solution";
+  Plot.set_xlabel out "iteration";
+  Plot.set_ylabel out "CF vale";
+  Plot.plot_fun ~h:out (fun x -> let cost, _ = List.nth_exn result (Int.of_float x) in Float.of_int cost) 0. no_iter;
+  Plot.output out;;
+
