@@ -16,41 +16,20 @@ type item =
   ; item_size: int
   ; item_value: int }
 
-let no_classes = 17
-
+let no_classes = 20
 let size_class = 3
 
-let size_limit = 400
+let size_limit = 300
 
 let local_size = 10
 
-let max_t = 10000.
-let min_t = 0.1
-let step = 0.98853
-
-let pow x n =
-  let rec inner_pow y x n =
-    match (y, n) with
-    | 0, _ ->
-        0
-    | 1, _ ->
-        1
-    | _, 0 ->
-        1
-    | y, 1 ->
-        y
-    | y, n ->
-        inner_pow (y * x) x (n - 1)
-  in
-  inner_pow x x n
+let max_t = 1000.
+let min_t = 0.01
+let step = 0.988553
 
 let create_item (id : int) : item =
   { item_id= id
-  ; (*
-        item_class = (id/size_class) +1;
-        item_id_in_class = (id mod (size_class)) +1;
-        *)
-    item_class= id / size_class
+  ;  item_class= id / size_class
   ; item_id_in_class= Stdlib.( mod ) id size_class
   ; item_size= Random.int 50 + 1
   ; item_value= Random.int 50 + 1 }
@@ -154,7 +133,7 @@ let () =
 
 (* Metropolis  *)
 
-let euler : float = 2.71828
+let euler : float = 2.71828182846
 
 let metropolis (t : float) (best : int list)
     (best_cost : int) (current : int list) (current_cost : int) :
@@ -247,7 +226,7 @@ let () =
   print_results items
 
 let stats n =
-  let results =  Array.init n ~f:(fun _ -> let _, cost,_ = simulated_annealing local_size max_t min_t step in Float.of_int cost ) in
+  let results = Stdlib.Seq.forever (fun () -> let _, cost,_ = simulated_annealing local_size max_t min_t step in Float.of_int cost ) |> Stdlib.Seq.take n |> Stdlib.Array.of_seq in
   [Owl_stats.mean results; Owl_stats.median results; Owl_stats.std results; Owl_stats.max results; Owl_stats.min results] 
 
 
