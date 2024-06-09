@@ -1,6 +1,5 @@
 test.txt
 text.txt
-flake.lock
 _build
 SA_MCKP.png
 SA_MCKP_10.png
@@ -13,3 +12,4 @@ result_15.txt
 result_17.txt
 result_20.txt
 result_5.txt
+Dependencies/nix-pkgs/plplot/result
