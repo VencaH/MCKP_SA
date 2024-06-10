@@ -2,6 +2,7 @@ open Base
 open Owl_plplot
 
 let () = Random.self_init ()
+let graph_ftype = "svg"
 
 let time_it f =
   let t = Stdlib.Sys.time () in
@@ -16,7 +17,7 @@ type item =
   ; item_size: int
   ; item_value: int }
 
-let no_classes = 20
+let no_classes = 15
 let size_class = 3
 
 let size_limit = 300
@@ -248,8 +249,9 @@ let () =
 let () =
 let result,_,_ = result in
 let no_iter = Float.of_int (List.length result) -. 1. in
-let filename = "SA_MCKP.png" in
+let filename = "SA_MCKP." ^ graph_ftype in
 let out = Plot.create filename in
+  Plot.set_pen_size out 1.;
   Plot.set_title out "SA solution";
   Plot.set_xlabel out "iteration";
   Plot.set_ylabel out "CF vale";
